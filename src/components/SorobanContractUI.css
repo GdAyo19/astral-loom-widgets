@@ -1,0 +1,71 @@
+.soroban-contract-ui {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 500px;
+  font-family: sans-serif;
+  background-color: #ffffff;
+}
+
+.soroban-contract-ui h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  color: #2d3748;
+}
+
+.soroban-contract-ui .form-group {
+  margin-bottom: 12px;
+}
+
+.soroban-contract-ui label {
+  display: block;
+  font-size: 0.85rem;
+  color: #4a5568;
+  margin-bottom: 4px;
+}
+
+.soroban-contract-ui input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.soroban-contract-ui button {
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.soroban-contract-ui button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.soroban-contract-ui .error-box {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #fed7d7;
+  color: #c53030;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.soroban-contract-ui .result-box {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #edf2f7;
+  color: #2d3748;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}

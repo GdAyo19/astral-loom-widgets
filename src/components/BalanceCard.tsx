@@ -1,21 +1,63 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Horizon } from '@stellar/stellar-sdk';
 
 export interface BalanceCardProps {
   publicKey: string;
-  balances: Array<{
-    assetCode: string;
-    balance: string;
-  }>;
-  network?: 'testnet' | 'mainnet';
+  network?: 'testnet' | 'mainnet' | 'futurenet';
+  horizonUrl?: string; // Optional custom URL
+  className?: string;
 }
 
 export const BalanceCard: React.FC<BalanceCardProps> = ({
   publicKey,
-  balances,
   network = 'testnet',
+  horizonUrl,
+  className = '',
 }) => {
+  const [balances, setBalances] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    async function fetchBalances() {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        let url = horizonUrl;
+        if (!url) {
+          if (network === 'mainnet') url = 'https://horizon.stellar.org';
+          else if (network === 'testnet') url = 'https://horizon-testnet.stellar.org';
+          else url = 'https://horizon-futurenet.stellar.org';
+        }
+        
+        const server = new Horizon.Server(url);
+        const account = await server.accounts().accountId(publicKey).call();
+        
+        if (isMounted) {
+          setBalances(account.balances);
+        }
+      } catch (err: any) {
+        if (isMounted) {
+          setError(err?.response?.data?.detail || err.message || 'Failed to fetch balances');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    if (publicKey) {
+      fetchBalances();
+    }
+  }, [publicKey, network, horizonUrl]);
+
   return (
     <div
+      className={`astral-balance-card ${className}`}
       style={{
         border: '1px solid #e2e8f0',
         borderRadius: '8px',
@@ -41,30 +83,44 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({
             borderRadius: '4px',
             backgroundColor: '#edf2f7',
             fontSize: '0.7rem',
+            textTransform: 'uppercase'
           }}
         >
           {network}
         </span>
       </p>
 
-      {balances.length === 0 ? (
+      {loading && <p style={{ color: '#a0aec0' }}>Loading balances...</p>}
+      
+      {error && (
+        <div style={{ padding: '8px', backgroundColor: '#fed7d7', color: '#c53030', borderRadius: '4px', fontSize: '0.9rem' }}>
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && balances.length === 0 && (
         <p style={{ color: '#a0aec0' }}>No balances found.</p>
-      ) : (
+      )}
+
+      {!loading && !error && balances.length > 0 && (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          {balances.map((b, i) => (
-            <li
-              key={i}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                padding: '8px 0',
-                borderBottom: i === balances.length - 1 ? 'none' : '1px solid #edf2f7',
-              }}
-            >
-              <strong style={{ color: '#2d3748' }}>{b.assetCode}</strong>
-              <span style={{ color: '#4a5568' }}>{b.balance}</span>
-            </li>
-          ))}
+          {balances.map((b, i) => {
+            const assetCode = b.asset_type === 'native' ? 'XLM' : b.asset_code;
+            return (
+              <li
+                key={i}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '8px 0',
+                  borderBottom: i === balances.length - 1 ? 'none' : '1px solid #edf2f7',
+                }}
+              >
+                <strong style={{ color: '#2d3748' }}>{assetCode}</strong>
+                <span style={{ color: '#4a5568' }}>{b.balance}</span>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

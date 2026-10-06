@@ -99,21 +99,32 @@ npm install astral-loom-widgets react react-dom @stellar/stellar-sdk
 Import and use the pre-built components directly in your app:
 
 ```tsx
-import { BalanceCard } from 'astral-loom-widgets';
+import { BalanceCard, SorobanContractUI } from 'astral-loom-widgets';
 
 function App() {
   return (
-    <BalanceCard 
-      publicKey="GA...YOUR_ACCOUNT"
-      network="testnet"
-      balances={[
-        { assetCode: 'XLM', balance: '100.00' },
-        { assetCode: 'USDC', balance: '50.00' }
-      ]}
-    />
+    <div>
+      {/* Automatically fetches and displays real balances from Horizon */}
+      <BalanceCard 
+        publicKey="GA...YOUR_ACCOUNT"
+        network="testnet"
+      />
+      
+      {/* NEW! A fully interactive UI for simulating Soroban smart contracts */}
+      <SorobanContractUI 
+        contractId="C..."
+        network="testnet"
+      />
+    </div>
   );
 }
 ```
+
+**New Feature: Live Data Fetching!**
+The widgets are no longer dumb components—`BalanceCard` and `TransactionHistory` automatically connect to the Stellar Horizon API to fetch real, live data for any given public key.
+
+**New Feature: Soroban Contract Integration!**
+Easily test, interact with, and simulate Soroban smart contracts directly in your frontend with `<SorobanContractUI />`.
 
 ---
 

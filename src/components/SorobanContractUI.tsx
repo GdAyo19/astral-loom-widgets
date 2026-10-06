@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { rpc, Contract, xdr, Account, nativeToScVal } from '@stellar/stellar-sdk';
+import { rpc, Contract, Account, nativeToScVal, TransactionBuilder } from '@stellar/stellar-sdk';
 import './SorobanContractUI.css';
 
 export interface SorobanContractUIProps {
@@ -34,12 +34,12 @@ export const SorobanContractUI: React.FC<SorobanContractUIProps> = ({
 
       const server = new rpc.Server(url);
       
-      let parsedArgs: any[] = [];
+      let parsedArgs: unknown[] = [];
       if (argsStr.trim()) {
         try {
           parsedArgs = JSON.parse(`[${argsStr}]`);
-        } catch (e) {
-          throw new Error('Arguments must be valid JSON values separated by commas');
+        } catch (_e) {
+          throw new Error('Arguments must be valid JSON values separated by commas', { cause: _e });
         }
       }
       
@@ -48,7 +48,7 @@ export const SorobanContractUI: React.FC<SorobanContractUIProps> = ({
       
       // Create a dummy account to build the transaction for simulation
       const account = new Account('GA6L7D63QJYYZBYCDBYQYJ4XN2O4S7JFYR53UKN673F6N5B2F5C6Y47X', '0');
-      const tx = new (require('@stellar/stellar-sdk').TransactionBuilder)(account, {
+      const tx = new TransactionBuilder(account, {
         fee: '100',
         networkPassphrase: 'Test SDF Network ; September 2015', // Simulation doesn't care much
       })
@@ -73,8 +73,8 @@ export const SorobanContractUI: React.FC<SorobanContractUIProps> = ({
         throw new Error('Simulation failed or is not ready');
       }
 
-    } catch (err: any) {
-      setError(err.message || String(err));
+    } catch (err: unknown) {
+      setError((err as Error).message || String(err));
     } finally {
       setLoading(false);
     }

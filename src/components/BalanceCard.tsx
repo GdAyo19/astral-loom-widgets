@@ -14,12 +14,12 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({
   horizonUrl,
   className = '',
 }) => {
-  const [balances, setBalances] = useState<any[]>([]);
+  const [balances, setBalances] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
+    const isMounted = true;
     
     async function fetchBalances() {
       setLoading(true);
@@ -39,9 +39,10 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({
         if (isMounted) {
           setBalances(account.balances);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (isMounted) {
-          setError(err?.response?.data?.detail || err.message || 'Failed to fetch balances');
+          const errorMsg = (err as any)?.response?.data?.detail || (err as Error)?.message || 'Failed to fetch balances';
+          setError(errorMsg);
         }
       } finally {
         if (isMounted) {

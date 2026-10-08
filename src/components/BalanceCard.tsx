@@ -41,7 +41,7 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({
         }
       } catch (err: unknown) {
         if (isMounted) {
-          const errorMsg = (err as any)?.response?.data?.detail || (err as Error)?.message || 'Failed to fetch balances';
+          const errorMsg = err instanceof Error ? err.message : 'Failed to fetch balances';
           setError(errorMsg);
         }
       } finally {
